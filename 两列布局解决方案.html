@@ -1,0 +1,188 @@
+<html>
+<head>
+  <title>两列布局解决方案</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="Evernote Windows/304720 (zh-CN, DDL); Windows/6.1.7601 Service Pack 1 (Win64);"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="418"/>
+<h1>两列布局解决方案</h1>
+
+<div>
+<span><div><b><span style="font-size: 20px;">定宽与自适应</span></b></div><div><b><span style="font-size: 20px;"><br/></span></b></div><div><b><span style="font-size: 15px;">浮动 float + margin</span></b></div><div><b><span style="font-size: 15px;"><br/></span></b></div><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right&quot;&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--css--&gt;<br/>
+.left {<br/>
+  float: left;<br/>
+  width: 100px;<br/>
+}<br/>
+.right {<br/>
+  margin-left: 120px;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">}</span></span></span></div></div><div><p><em>简单的布局方法，左侧设置浮动，右侧设置<code>margin-left</code>（避免环绕左侧）的布局方法</em></p><ul><li>优点：容易理解，易于编写</li><li>缺点：兼容性问题（IE6有三像素Bug）</li></ul><h3>浮动 float + margin + (fix)</h3></div><div><br/></div><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right-fix&quot;&gt;<br/>
+    &lt;div class=&quot;right&quot;&gt;<br/>
+      &lt;p&gt;right&lt;/p&gt;<br/>
+      &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;/div&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--css--&gt;<br/>
+.left {<br/>
+  float: left;<br/>
+  width: 100px;<br/>
+  position: relative; //提高层级<br/>
+}<br/>
+.right-fix {<br/>
+  float: right;<br/>
+  width: 100%;<br/>
+  margin-left: -100px;<br/>
+}<br/>
+.right {<br/>
+  margin-left: 120px;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">}</span></span></span></div></div><div><p><em>通过在 <code>html</code> 文件的 <code>right</code> 上套上一层 <code>right-fix</code>，然后对 <code>right-fix</code> 设置浮动可以解决 IE6 的兼容性问题，然后提高 <code>left</code> 的层级设置定位属性为 <code>relative</code></em></p><ul><li>优点：结构和样式更加复杂，不利于理解</li><li>缺点：兼容性好</li></ul><h3>浮动 float + overflow</h3></div><div><br/></div><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right&quot;&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--css--&gt;<br/>
+.left {<br/>
+  float: left;<br/>
+  width: 100px;<br/>
+  margin-right: 20px;<br/>
+}<br/>
+.right{<br/>
+  overflow: hidden;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">}</span></span></span></div></div><div><p><em>通过设置<code>overflow</code>触发 BFC（Block Formatting Context块级格式化文本 ）模式，内容与外界隔离，不受浮动影响（不会环绕浮动元素）</em></p><ul><li>优点：设置简单</li><li>缺点：兼容性问题（IE6 不支持）</li></ul><h3>table</h3></div><div><br/></div><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right&quot;&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--css--&gt;<br/>
+.parent {<br/>
+  display: table;<br/>
+  width: 100%;<br/>
+}<br/>
+.left,.right {<br/>
+  display: table-cell; //不能设置 margin<br/>
+  table-layout: fixed; //优点 1.加速table渲染。2.实现了布局优先<br/>
+}<br/>
+.left {<br/>
+  width:100px;<br/>
+  padding-right: 20px;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">}</span></span></span></div></div><div><p><em><code>table</code>特点，每列的宽度之和一定是等于表格宽度的，所以设置<code>left</code>，<code>right</code>会自动填满剩下的宽度</em></p><ul><li>缺点：代码较多</li></ul><h3>flex</h3></div><div><br/></div><div style="-en-codeblock: true; box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 12px; color: rgb(51, 51, 51); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902); background-position: initial initial; background-repeat: initial initial;"><div>&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right&quot;&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</div><div><br/></div><div>&lt;!--css--&gt;<br/>
+.parent {<br/>
+  display: flex;<br/>
+}<br/>
+.left {<br/>
+  width: 100px;<br/>
+  margin-right: 20px;<br/>
+}<br/>
+.right {<br/>
+  flex: 1;<br/>
+}</div><div><br/></div><div>flex: 1 =&gt; flex: 1,1,0增长因子，收缩因子都是1，基础宽度为0（剩余宽度都分配给了right）</div></div><div><br/></div><div><ul><li>缺点：兼容性问题，性能问题（做一些小范围的布局）</li></ul><h2>不定宽与自适应</h2><h3>浮动 float + margin 与 浮动 float + margin + (fix)</h3></div><div><br/></div><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right&quot;&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--css--&gt;<br/>
+.left {<br/>
+  float: left;<br/>
+  width: 100px;<br/>
+}<br/>
+.right {<br/>
+  margin-left: 120px;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">}</span></span></span></div></div><div><p><em>不能完成不定宽自适应，<code>width: 100px;</code>与<code>margin-left: 120px;</code>是强耦合的属性</em></p><h3>浮动 float + overflow</h3></div><div><br/></div><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right&quot;&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--css--&gt;<br/>
+.left {<br/>
+  float: left;<br/>
+  margin-right: 20px;<br/>
+}<br/>
+.right{<br/>
+  overflow: hidden;<br/>
+}<br/>
+.left p {<br/>
+  width: 200px;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">}</span></span></span></div></div><div><p><em>可以实现不定宽自适应布局(IE6 有兼容性问题)</em></p><h3>table</h3></div><div><br/></div><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right&quot;&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--css--&gt;<br/>
+.parent {<br/>
+  display: table;<br/>
+  width: 100%;<br/>
+}<br/>
+.left,.right {<br/>
+  display: table-cell;<br/>
+  /*table-layout: fixed;*/<br/>
+}<br/>
+.left {<br/>
+  /*width: 100px;*/<br/>
+  width: 0.1%;<br/>
+  padding-right: 20px;<br/>
+}<br/>
+.left p {<br/>
+  width: 200px;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">}</span></span></span></div></div><div><p><em>可以实现不定宽自适应布局，如果根据内容适应宽度，应去掉<code>table-layout: fixed</code>,同时更改<code>left</code>宽度<code>width:0.1%</code>(设置 0.1% 有兼容性的考虑，1px 在 IE8 中有问题)，再设置单元格内容（不兼容IE6）</em></p><h3>flex</h3></div><div><br/></div><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--html--&gt;<br/>
+&lt;div class=&quot;parent&quot;&gt;<br/>
+  &lt;div class=&quot;left&quot;&gt;<br/>
+    &lt;p&gt;left&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+  &lt;div class=&quot;right&quot;&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+    &lt;p&gt;right&lt;/p&gt;<br/>
+  &lt;/div&gt;<br/>
+&lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;!--css--&gt;<br/>
+.parent {<br/>
+  display: flex;<br/>
+}<br/>
+.left {<br/>
+  width: 200px;<br/>
+  margin-right: 20px;<br/>
+}<br/>
+.right {<br/>
+  flex: 1;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">}</span></span></span></div></div><div><br/></div><div><em>可以实现不定宽自适应布局(低版本浏览器有兼容性问题)</em></div></span>
+</div></body></html> 

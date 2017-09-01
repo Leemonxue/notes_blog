@@ -1,0 +1,105 @@
+<html>
+<head>
+  <title>关于事件委托</title>
+  <basefont face="微软雅黑" size="2" />
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+  <meta name="exporter-version" content="Evernote Windows/304720 (zh-CN, DDL); Windows/6.1.7601 Service Pack 1 (Win64);"/>
+  <style>
+    body, td {
+      font-family: 微软雅黑;
+      font-size: 10pt;
+    }
+  </style>
+</head>
+<body>
+<a name="388"/>
+<h1>关于事件委托</h1>
+
+<div>
+<span><div><b><span style="font-size: 16px;">概念：</span></b></div><div>JavaScript高级程序设计上讲：事件委托就是利用事件冒泡，只指定一个事件处理程序，就可以管理某一类型的所有事件。（又名事件代理）</div><div><br/></div><div><span style="font-size: 16px;"><b>存在意义：</b></span></div><div><p>一般来说，dom需要有事件处理程序，我们都会直接给它设事件处理程序就好了，那如果是很多的dom需要添加事件处理呢？比如我们有100个li，每个li都有相同的click点击事件，可能我们会用for循环的方法，来遍历所有的li，然后给它们添加事件，那这么做会存在什么影响呢？</p><p>在JavaScript中，添加到页面上的事件处理程序数量将直接关系到页面的整体运行性能，因为需要不断的与dom节点进行交互，访问dom的次数越多，引起浏览器重绘与重排的次数也就越多，就会延长整个页面的交互就绪时间，这就是为什么<b>性能优化的主要思想之一就是减少DOM操作</b>的原因；如果要用事件委托，就会将所有的操作放到js程序里面，与dom的操作就只需要交互一次，这样就能大大的减少与dom的交互次数，提高性能；（减少DOM操作）</p></div><div><br/></div><div>每个函数都是一个对象，是对象就会占用内存，对象越多，内存占用率就越大，自然性能就越差了（内存不够用，是硬伤，哈哈），比如上面的100个li，就要占用100个内存空间，如果是1000个，10000个呢，那只能说呵呵了，如果用事件委托，那么我们就可以<b>只对它的父级（如果只有一个父级）这一个对象进行操作</b>，这样我们就需要一个内存空间就够了，是不是省了很多，自然性能就会更好。（减少占用内存）</div><div><br/></div><div><span style="font-size: 16px;"><b>原理：</b></span></div><div>事件委托是利用事件的冒泡原理来实现的，何为事件冒泡呢？就是事件从最深的节点开始，然后逐步向上传播事件，举个例子：页面上有这么一个节点树，div&gt;ul&gt;li&gt;a;比如给最里面的a加一个click点击事件，那么这个事件就会一层一层的往外执行，执行顺序a&gt;li&gt;ul&gt;div，有这样一个机制，那么我们给最外面的div加点击事件，那么里面的ul，li，a做点击事件的时候，都会冒泡到最外层的div上，所以都会触发，<b>这就是事件委托，委托它们父级代为执行事件</b>。</div><div><br/></div><div><b><span style="font-size: 16px;">实现方法：</span></b></div><div><br/></div><div style="-en-codeblock: true; box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 12px; color: rgb(51, 51, 51); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902); background-position: initial initial; background-repeat: initial initial;"><div>&lt;ul id=&quot;ul1&quot;&gt;</div><div>    &lt;li&gt;111&lt;/li&gt;</div><div>    &lt;li&gt;222&lt;/li&gt;</div><div>    &lt;li&gt;333&lt;/li&gt;</div><div>    &lt;li&gt;444&lt;/li&gt;</div><div>&lt;/ul&gt;</div><div>//普通绑定事件</div><div>window.onload = function(){</div><div>    var oUl = document.getElementById(&quot;ul1&quot;);</div><div>    var aLi = oUl.getElementsByTagName('li');</div><div>    for(var i=0;i&lt;aLi.length;i++){</div><div>        aLi[i].onclick = function(){</div><div>            alert(123);</div><div>        }</div><div>    }</div><div>}</div><div>//用事件委托</div><div>window.onload = function(){<br/>
+    var oUl = document.getElementById(&quot;ul1&quot;);<br/>
+  oUl.onclick = function(){<br/>
+        alert(123);<br/>
+    }</div><div>}</div><div>//因为li上的click事件会因为冒泡触发到ul上</div></div><div><br/></div><div>但如果如果我想让事件代理的效果跟直接给节点的事件效果一样怎么办，比如说只有点击li才会触发，可以利用：</div><div>Event对象提供了一个属性叫target，返回事件的目标节点，我们称为事件源，也就是说，target就可以表示为当前的事件操作的dom，但是不是真正操作dom，当然，这个是有兼容性的，标准浏览器用ev.target，IE浏览器用event.srcElement，此时只是获取了当前节点的位置，并不知道是什么节点名称，这里我们用nodeName来获取</div><div>具体是什么标签名，这个返回的是一个大写的，我们需要转成小写再做比较（习惯问题）：</div><div><br/></div><div style="-en-codeblock: true; box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 12px; color: rgb(51, 51, 51); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902); background-position: initial initial; background-repeat: initial initial;"><div>window.onload = function(){</div><div>     var oUl = document.getElementById(&quot;ul1&quot;);</div><div>     oUl.onclick = function(ev){</div><div>          var ev = ev || window.event;</div><div>          var target = ev.target || ev.srcElement;</div><div>          if(target.nodeName.toLowerCase() == 'li'){</div><div>               alert(123);</div><div>        　　　　alert(target.innerHTML);</div><div>           }</div><div>     }</div><div>}</div></div><div><br/></div><div><b><span style="font-size: 16px;">问题：</span></b></div><ul><li>上面的例子是说li操作的是同样的效果，要是每个li被点击的效果都不一样，那么用事件委托还有用吗<br/></li></ul><div style="box-sizing: border-box; padding: 8px; border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902);"><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">&lt;div id=&quot;box&quot;&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">        &lt;input type=&quot;button&quot; id=&quot;add&quot; value=&quot;添加&quot; /&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">        &lt;input type=&quot;button&quot; id=&quot;remove&quot; value=&quot;删除&quot; /&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">        &lt;input type=&quot;button&quot; id=&quot;move&quot; value=&quot;移动&quot; /&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">        &lt;input type=&quot;button&quot; id=&quot;select&quot; value=&quot;选择&quot; /&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"> &lt;/div&gt;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">//普通事件绑定</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">window.onload = function(){</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            var Add = document.getElementById(&quot;add&quot;);</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            var Remove = document.getElementById(&quot;remove&quot;);</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            var Move = document.getElementById(&quot;move&quot;);</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            var Select = document.getElementById(&quot;select&quot;);</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);"><br/></span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            Add.onclick = function(){</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                alert('添加');</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            };</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            Remove.onclick = function(){</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                alert('删除');</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            };</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            Move.onclick = function(){</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                alert('移动');</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            };</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            Select.onclick = function(){</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                alert('选择');</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            }</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">        }</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">//事件委托</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">window.onload = function(){</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            var oBox = document.getElementById(&quot;box&quot;);</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            oBox.onclick = function (ev) {</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                var ev = ev || window.event;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                var target = ev.target || ev.srcElement;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                if(target.nodeName.toLocaleLowerCase() == 'input'){</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                    switch(target.id){</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                        case 'add' :</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                            alert('添加');</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                            break;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                        case 'remove' :</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                            alert('删除');</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                            break;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                        case 'move' :</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                            alert('移动');</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                            break;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                        case 'select' :</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                            alert('选择');</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                            break;</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                    }</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">                }</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">            }</span></span></span></div><div><span style="font-size: 12px;"><span style="font-family: Monaco, Menlo, Consolas, 'Courier New', monospace;"><span style="color: rgb(51, 51, 51);">        }</span></span></span></div></div><div><br/></div><ul><li>现在讲的都是document加载完成的现有dom节点下的操作，那么如果是新增的节点，新增的节点会有事件吗</li></ul><div><br/></div><div style="-en-codeblock: true; box-sizing: border-box; padding: 8px; font-family: Monaco, Menlo, Consolas, &quot;Courier New&quot;, monospace; font-size: 12px; color: rgb(51, 51, 51); border-top-left-radius: 4px; border-top-right-radius: 4px; border-bottom-right-radius: 4px; border-bottom-left-radius: 4px; background-color: rgb(251, 250, 248); border: 1px solid rgba(0, 0, 0, 0.14902); background-position: initial initial; background-repeat: initial initial;"><div>&lt;input type=&quot;button&quot; name=&quot;&quot; id=&quot;btn&quot; value=&quot;添加&quot; /&gt;<br/>
+    &lt;ul id=&quot;ul1&quot;&gt;<br/>
+        &lt;li&gt;111&lt;/li&gt;<br/>
+        &lt;li&gt;222&lt;/li&gt;<br/>
+        &lt;li&gt;333&lt;/li&gt;<br/>
+        &lt;li&gt;444&lt;/li&gt;</div><div>    &lt;/ul&gt;</div><div>//普通事件绑定，但是你会发现，新增的li是没有事件的，说明添加子节点的时候，事件没有一起添加进去</div><div>window.onload = function(){<br/>
+            var oBtn = document.getElementById(&quot;btn&quot;);<br/>
+            var oUl = document.getElementById(&quot;ul1&quot;);<br/>
+            var aLi = oUl.getElementsByTagName('li');<br/>
+            var num = 4;<br/>
+           <br/>
+            //鼠标移入变红，移出变白<br/>
+            for(var i=0; i&lt;aLi.length;i++){<br/>
+                aLi[i].onmouseover = function(){<br/>
+                    this.style.background = 'red';<br/>
+                };<br/>
+                aLi[i].onmouseout = function(){<br/>
+                    this.style.background = '#fff';<br/>
+                }<br/>
+            }<br/>
+            //添加新节点<br/>
+            oBtn.onclick = function(){<br/>
+                num++;<br/>
+                var oLi = document.createElement('li');<br/>
+                oLi.innerHTML = 111*num;<br/>
+                oUl.appendChild(oLi);<br/>
+            };</div><div>        }</div><div>//一般的解决方法，将for循环用一个函数包起来，命名为mHover，虽然功能实现了，看着还挺好，但实际上无疑是又增加了一个dom操作</div><div>window.onload = function(){<br/>
+            var oBtn = document.getElementById(&quot;btn&quot;);<br/>
+            var oUl = document.getElementById(&quot;ul1&quot;);<br/>
+            var aLi = oUl.getElementsByTagName('li');<br/>
+            var num = 4;<br/>
+           <br/>
+            function mHover () {<br/>
+                //鼠标移入变红，移出变白<br/>
+                for(var i=0; i&lt;aLi.length;i++){<br/>
+                    aLi[i].onmouseover = function(){<br/>
+                        this.style.background = 'red';<br/>
+                    };<br/>
+                    aLi[i].onmouseout = function(){<br/>
+                        this.style.background = '#fff';<br/>
+                    }<br/>
+                }<br/>
+            }<br/>
+            mHover ();<br/>
+            //添加新节点<br/>
+            oBtn.onclick = function(){<br/>
+                num++;<br/>
+                var oLi = document.createElement('li');<br/>
+                oLi.innerHTML = 111*num;<br/>
+                oUl.appendChild(oLi);<br/>
+                mHover ();<br/>
+            };</div><div>        }</div><div>//事件委托的解决方法</div><div>window.onload = function(){<br/>
+            var oBtn = document.getElementById(&quot;btn&quot;);<br/>
+            var oUl = document.getElementById(&quot;ul1&quot;);<br/>
+            var aLi = oUl.getElementsByTagName('li');<br/>
+            var num = 4;<br/>
+           <br/>
+            //事件委托，添加的子元素也有事件<br/>
+            oUl.onmouseover = function(ev){<br/>
+                var ev = ev || window.event;<br/>
+                var target = ev.target || ev.srcElement;<br/>
+                if(target.nodeName.toLowerCase() == 'li'){<br/>
+                    target.style.background = &quot;red&quot;;<br/>
+                }<br/>
+               <br/>
+            };<br/>
+            oUl.onmouseout = function(ev){<br/>
+                var ev = ev || window.event;<br/>
+                var target = ev.target || ev.srcElement;<br/>
+                if(target.nodeName.toLowerCase() == 'li'){<br/>
+                    target.style.background = &quot;#fff&quot;;<br/>
+                }<br/>
+               <br/>
+            };<br/>
+           <br/>
+            //添加新节点<br/>
+            oBtn.onclick = function(){<br/>
+                num++;<br/>
+                var oLi = document.createElement('li');<br/>
+                oLi.innerHTML = 111*num;<br/>
+                oUl.appendChild(oLi);<br/>
+            };</div><div>        }</div><div>//新添加的子元素是带有事件效果的，我们可以发现，当用事件委托的时候，根本就不需要去遍历元素的子节点，只需要给父级元素添加事件就好了，其他的都是在js里面的执行，这样可以大大的减少dom操作，这才是事件委托的精髓所在。</div></div><div><br/></div><div><b><span style="font-size: 16px;">总结：</span></b></div><div><p>那什么样的事件可以用事件委托，什么样的事件不可以用呢？</p><p>适合用事件委托的事件：click，mousedown，mouseup，keydown，keyup，keypress。</p><p>值得注意的是，mouseover和mouseout虽然也有事件冒泡，但是处理它们的时候需要特别的注意，因为需要经常计算它们的位置，处理起来不太容易。</p><p>不适合的就有很多了，举个例子，mousemove，每次都要计算它的位置，非常不好把控，在不如说focus，blur之类的，本身就没用冒泡的特性，自然就不能用事件委托了。</p></div><div><a href="http://www.cnblogs.com/liugang-vip/p/5616484.html">http://www.cnblogs.com/liugang-vip/p/5616484.html</a> 写的十分详细，有各种各样的使用场景和解决方法，可以参考，</div></span>
+</div></body></html> 
